@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<script src="wasm_exec.js"></script>
+		<script>
+			const go = new Go();
+			WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+				go.run(result.instance);
+			});
+        </script>
+        
+        <input type="file" id="file" name="file" />
+        <script>
+            function handleFileSelect(evt) {
+              var file = evt.target.files[0]; // FileList object
+              var reader = new FileReader();
+
+              reader.onload = function () {
+                startTime = new Date();
+                model = unmarshal3MF(new Uint8Array(reader.result));
+                console.log(Math.round((new Date() - startTime)) + " ms");
+              }
+
+              reader.readAsArrayBuffer(file);
+            }
+          
+            document.getElementById('file').addEventListener('change', handleFileSelect, false);
+          </script>
+          <div id="info">
+            <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a>
+            <a href="http://3mf.io" target="_blank" rel="noopener">3MF File format</a>
+            <div>3MF loader test by <a href="https://github.com/technohippy" target="_blank" rel="noopener">technohippy</a></div>
+            <div>Cube gears file from <a href="https://github.com/3MFConsortium/3mf-samples" target="_blank" rel="noopener">3mf-samples</a></div>
+          </div>
+      
+          <script src="js/libs/jszip.min.js"></script>
+          <script src="three.js"></script>
+          <script src="3MFLoader.js"></script>
+          <script src="OrbitControls.js"></script>
+          <script>      
+            var camera, scene, renderer;
+      
+            // init();
+      
+            function init() {
+      
+              renderer = new THREE.WebGLRenderer( { antialias: true } );
+              renderer.setPixelRatio( window.devicePixelRatio );
+              renderer.setSize( window.innerWidth, window.innerHeight );
+              document.body.appendChild( renderer.domElement );
+      
+              scene = new THREE.Scene();
+              scene.background = new THREE.Color( 0x333333 );
+      
+              scene.add( new THREE.AmbientLight( 0xffffff, 0.2 ) );
+      
+              camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 1, 500 );
+      
+              // Z is up for objects intended to be 3D printed.
+      
+              camera.up.set( 0, 0, 1 );
+              camera.position.set( - 80, - 90, 150 );
+              scene.add( camera );
+      
+              var controls = new THREE.OrbitControls( camera, renderer.domElement );
+              controls.addEventListener( 'change', render );
+              controls.minDistance = 50;
+              controls.maxDistance = 300;
+              controls.enablePan = false;
+              controls.target.set( 80, 65, 20 );
+              controls.update();
+      
+              var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+              camera.add( pointLight );
+              var loader = new THREE.ThreeMFLoader();
+                startTime = new Date();
+              loader.load( 'http://localhost:3434/Terminus_EASY_HOLLOW_NAMED_PARTS_v2-repositioned.3MF', function ( object ) {
+                console.log(Math.round((new Date() - startTime)) + " ms");
+      
+                scene.add( object );
+                render();
+      
+              } );
+      
+              window.addEventListener( 'resize', onWindowResize, false );
+      
+            }
+      
+            function onWindowResize() {
+      
+              camera.aspect = window.innerWidth / window.innerHeight;
+              camera.updateProjectionMatrix();
+      
+              renderer.setSize( window.innerWidth, window.innerHeight );
+      
+              render();
+      
+            }
+      
+            function render() {
+      
+              renderer.render( scene, camera );
+      
+            }
+      
+          </script>
+	</head>
+	<body></body>
+</html>

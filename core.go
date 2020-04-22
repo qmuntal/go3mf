@@ -1,3 +1,5 @@
+//go:generate go run gen_js.go -v
+
 package go3mf
 
 import (

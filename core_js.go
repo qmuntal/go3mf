@@ -32,6 +32,22 @@ var (
 	jsModel                 = RegisterClass("Model")
 )
 
+var registeredFuncs []js.Func
+
+func JSRelease() {
+	for i := range registeredFuncs {
+		registeredFuncs[i].Release()
+	}
+}
+
+func GetterFunc(fn func() interface{}) js.Func {
+	jfn := js.FuncOf(func(_ js.Value, _ []js.Value) interface{} {
+		return fn()
+	})
+	registeredFuncs = append(registeredFuncs, jfn)
+	return jfn
+}
+
 func registerCore() js.Value {
 	v := js.Global().Call("eval", "(class GO3MF{})")
 	js.Global().Set(jsNS, v)
@@ -103,13 +119,13 @@ func (att Attachment) JSValue() js.Value {
 }
 
 // JSValue returns a JavaScript value associated with the object.
-func (m Metadata) JSValue() js.Value {
+func (m *Metadata) JSValue() js.Value {
 	v := jsMetadata.New()
-	v.Set(attrName, m.Name.Local)
-	setString(v, "space", m.Name.Space)
-	v.Set("value", m.Value)
-	setString(v, attrType, m.Type)
-	v.Set(attrPreserve, m.Preserve)
+	v.Set("name", GetterFunc(func() interface{} { return m.Name.Local }))
+	v.Set("space", GetterFunc(func() interface{} { return m.Name.Space }))
+	v.Set("value", GetterFunc(func() interface{} { return m.Value }))
+	v.Set("type", GetterFunc(func() interface{} { return m.Type }))
+	v.Set("preserve", GetterFunc(func() interface{} { return m.Preserve }))
 	return v
 }
 
@@ -131,23 +147,25 @@ func (m Matrix) JSValue() js.Value {
 // JSValue returns a JavaScript value associated with the object.
 func (item *Item) JSValue() js.Value {
 	v := jsItem.New()
-	v.Set("objectId", item.ObjectID)
-	v.Set(attrTransform, item.Transform)
-	setString(v, "partNumber", item.PartNumber)
-	v.Set(attrMetadata, jsValueMetadatas(item.Metadata))
-	v.Set("anyAttr", item.AnyAttr)
+	v.Set("objectId", GetterFunc(func() interface{} { return item.ObjectID }))
+	v.Set("transform", GetterFunc(func() interface{} { return item.Transform }))
+	v.Set("partNumber", GetterFunc(func() interface{} { return item.PartNumber }))
+	v.Set("metadata", GetterFunc(func() interface{} { return jsValueMetadatas(item.Metadata) }))
+	v.Set("anyAttr", GetterFunc(func() interface{} { return item.AnyAttr }))
 	return v
 }
 
 // JSValue returns a JavaScript value associated with the object.
 func (b Build) JSValue() js.Value {
 	v := jsBuild.New()
-	arr := arrayConstructor.New(len(b.Items))
-	for i, item := range b.Items {
-		arr.SetIndex(i, item)
-	}
-	v.Set("items", arr)
-	v.Set("anyAttr", b.AnyAttr)
+	v.Set("items", GetterFunc(func() interface{} {
+		arr := arrayConstructor.New(len(b.Items))
+		for i, item := range b.Items {
+			arr.SetIndex(i, item)
+		}
+		return arr
+	}))
+	v.Set("anyAttr", GetterFunc(func() interface{} { return b.AnyAttr }))
 	return v
 }
 
@@ -322,7 +340,7 @@ func jsValueRelationships(rels []Relationship) js.Value {
 func jsValueMetadatas(m []Metadata) js.Value {
 	arr := arrayConstructor.New(len(m))
 	for i, meta := range m {
-		arr.SetIndex(i, meta)
+		arr.SetIndex(i, &meta)
 	}
 	return arr
 }
