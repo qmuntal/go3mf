@@ -25,7 +25,6 @@ const fakeExtension = "http://dummy.com/fake_ext"
 
 var _ spec.ValidatorSpec = new(fakeSpec)
 var _ encoding.Decoder = new(fakeSpec)
-var _ encoding.PostProcessorDecoder = new(fakeSpec)
 var _ encoding.CharDataElementDecoder = new(metadataDecoder)
 var _ encoding.ChildElementDecoder = new(baseMaterialsDecoder)
 
@@ -39,8 +38,6 @@ func (f *fakeSpec) Local() string      { return "qm" }
 func (f *fakeSpec) SetLocal(_ string)  {}
 func (f *fakeSpec) SetRequired(_ bool) {}
 func (f *fakeSpec) SetModel(m *Model)  { f.m = m }
-
-func (e *fakeSpec) PostProcessDecode() {}
 
 func (f *fakeSpec) NewElementDecoder(ctx encoding.ElementDecoderContext) encoding.ElementDecoder {
 	if e, ok := ctx.ParentElement.(*Resources); ok {

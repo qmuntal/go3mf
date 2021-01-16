@@ -9,55 +9,6 @@ import (
 	"github.com/qmuntal/go3mf/errors"
 )
 
-func TestDecode_NoUUID(t *testing.T) {
-	got := new(go3mf.Model)
-	rootFile := `
-		<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06">
-		<resources>
-			<object id="20">
-				<components>
-					<component objectid="8" p:path="/3D/other.model"/>
-					<component objectid="8"/>
-				</components>
-			</object>
-		</resources>
-		<build>
-			<item objectid="20" transform="1 0 0 0 2 0 0 0 3 -66.4 -87.1 8.8" />
-			<item objectid="8" p:path="/3D/other.model" />
-		</build>
-		</model>
-		`
-	t.Run("base", func(t *testing.T) {
-		got.WithSpec(&Spec{LocalName: "p"})
-		if err := go3mf.UnmarshalModel([]byte(rootFile), got); err != nil {
-			t.Errorf("UnmarshalModel() unexpected error = %v", err)
-			return
-		}
-		buildAttr := GetBuildAttr(&got.Build)
-		if buildAttr == nil || buildAttr.UUID == "" {
-			t.Error("UnmarshalModel() empty build uuid")
-		}
-		for _, item := range got.Build.Items {
-			itemAttr := GetItemAttr(item)
-			if itemAttr == nil || itemAttr.UUID == "" {
-				t.Error("UnmarshalModel() empty item uuid")
-			}
-		}
-		for _, o := range got.Resources.Objects {
-			objectAttr := GetObjectAttr(o)
-			if objectAttr == nil || objectAttr.UUID == "" {
-				t.Error("UnmarshalModel() empty object uuid")
-			}
-			for _, c := range o.Components {
-				compAttr := GetComponentAttr(c)
-				if compAttr == nil || compAttr.UUID == "" {
-					t.Error("UnmarshalModel() empty component uuid")
-				}
-			}
-		}
-	})
-}
-
 func TestDecode(t *testing.T) {
 	components := &go3mf.Object{
 		AnyAttr: go3mf.AnyAttr{&ObjectAttr{UUID: "cb828680-8895-4e08-a1fc-be63e033df15"}},

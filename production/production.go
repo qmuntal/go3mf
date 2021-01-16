@@ -4,10 +4,16 @@ import (
 	"errors"
 
 	"github.com/qmuntal/go3mf"
+	"github.com/qmuntal/go3mf/uuid"
 )
 
 // Namespace is the canonical name of this extension.
 const Namespace = "http://schemas.microsoft.com/3dmanufacturing/production/2015/06"
+
+const (
+	attrProdUUID = "UUID"
+	attrPath     = "path"
+)
 
 var (
 	ErrUUID             = errors.New("UUID MUST be any of the four UUID variants described in IETF RFC 4122")
@@ -15,9 +21,8 @@ var (
 )
 
 type Spec struct {
-	LocalName       string
-	DisableAutoUUID bool
-	m               *go3mf.Model
+	LocalName string
+	m         *go3mf.Model
 }
 
 func (e *Spec) SetModel(m *go3mf.Model) { e.m = m }
@@ -113,7 +118,38 @@ func (p *ComponentAttr) getUUID() string {
 	return p.UUID
 }
 
-const (
-	attrProdUUID = "UUID"
-	attrPath     = "path"
-)
+func AddMissingUUIDs(m *go3mf.Model) {
+	if GetBuildAttr(&m.Build) == nil {
+		m.Build.AnyAttr = append(m.Build.AnyAttr, &BuildAttr{UUID: uuid.New()})
+	}
+	for _, item := range m.Build.Items {
+		ext := GetItemAttr(item)
+		if ext == nil {
+			item.AnyAttr = append(item.AnyAttr, &ItemAttr{
+				UUID: uuid.New(),
+			})
+		} else if ext.UUID == "" {
+			ext.UUID = uuid.New()
+		}
+	}
+	m.WalkObjects(func(s string, obj *go3mf.Object) error {
+		oext := GetObjectAttr(obj)
+		if oext == nil {
+			obj.AnyAttr = append(obj.AnyAttr, &ObjectAttr{UUID: uuid.New()})
+		} else if oext.UUID == "" {
+			oext.UUID = uuid.New()
+		}
+		for _, c := range obj.Components {
+			ext := GetComponentAttr(c)
+			if ext == nil {
+				c.AnyAttr = append(c.AnyAttr, &ComponentAttr{
+					UUID: uuid.New(),
+				})
+			} else if ext.UUID == "" {
+				ext.UUID = uuid.New()
+			}
+		}
+		return nil
+	})
+	return
+}

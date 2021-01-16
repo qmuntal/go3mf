@@ -75,15 +75,3 @@ type Encoder interface {
 	Flush() error
 	SetAutoClose(autoClose bool)
 }
-
-// PreProcessEncoder must be implemented by specs
-// that need to do some processing before encoding.
-type PreProcessEncoder interface {
-	PreProcessEncode()
-}
-
-// PostProcessDecode must be implemented by specs
-// that need to do some processing after encoding.
-type PostProcessorDecoder interface {
-	PostProcessDecode()
-}

@@ -135,13 +135,6 @@ func decodeModelFile(ctx context.Context, r io.Reader, model *Model, path string
 			err = &scanner.Err
 		}
 	}
-	if err == nil && isRoot {
-		for _, ext := range scanner.extensionDecoder {
-			if ext, ok := ext.(encoding.PostProcessorDecoder); ok {
-				ext.PostProcessDecode()
-			}
-		}
-	}
 	return err
 }
 

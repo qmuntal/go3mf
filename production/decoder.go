@@ -11,45 +11,6 @@ func (e Spec) NewElementDecoder(_ encoding.ElementDecoderContext) encoding.Eleme
 	return nil
 }
 
-func (e Spec) PostProcessDecode() {
-	if GetBuildAttr(&e.m.Build) == nil {
-		e.m.Build.AnyAttr = append(e.m.Build.AnyAttr, &BuildAttr{UUID: uuid.New()})
-	}
-	for _, item := range e.m.Build.Items {
-		ext := GetItemAttr(item)
-		if ext == nil {
-			item.AnyAttr = append(item.AnyAttr, &ItemAttr{
-				UUID: uuid.New(),
-			})
-		} else if ext.UUID == "" {
-			ext.UUID = uuid.New()
-		}
-	}
-	e.fillResourceUUID(&e.m.Resources)
-	for _, c := range e.m.Childs {
-		e.fillResourceUUID(&c.Resources)
-	}
-	return
-}
-
-func (e Spec) fillResourceUUID(res *go3mf.Resources) {
-	for _, obj := range res.Objects {
-		if GetObjectAttr(obj) == nil {
-			obj.AnyAttr = append(obj.AnyAttr, &ObjectAttr{UUID: uuid.New()})
-		}
-		for _, c := range obj.Components {
-			ext := GetComponentAttr(c)
-			if ext == nil {
-				c.AnyAttr = append(c.AnyAttr, &ComponentAttr{
-					UUID: uuid.New(),
-				})
-			} else if ext.UUID == "" {
-				ext.UUID = uuid.New()
-			}
-		}
-	}
-}
-
 func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) (errs error) {
 	switch t := parentNode.(type) {
 	case *go3mf.Build:
