@@ -6,7 +6,7 @@ import (
 	"github.com/qmuntal/go3mf/spec"
 )
 
-type Attr struct {
+type XMLAttr struct {
 	Name  xml.Name
 	Value []byte
 }
@@ -39,7 +39,7 @@ type ElementDecoderContext struct {
 // direct decoding from xml.
 type Decoder interface {
 	spec.Spec
-	DecodeAttribute(parent interface{}, attr Attr) error
+	DecodeAttribute(parent interface{}, attr XMLAttr) error
 	NewElementDecoder(ElementDecoderContext) ElementDecoder
 }
 
@@ -49,7 +49,7 @@ type ErrorWrapper interface {
 
 // ElementDecoder defines the minimum contract to decode a 3MF node.
 type ElementDecoder interface {
-	Start([]Attr) error
+	Start([]XMLAttr) error
 	End()
 }
 

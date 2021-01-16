@@ -16,7 +16,7 @@ func (e Spec) NewElementDecoder(ctx encoding.ElementDecoderContext) encoding.Ele
 	return nil
 }
 
-func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) error {
+func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.XMLAttr) error {
 	if parentNode, ok := parentNode.(*go3mf.Object); ok {
 		return objectAttrDecoder(parentNode, attr)
 	}
@@ -24,7 +24,7 @@ func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) error 
 }
 
 // objectAttrDecoder decodes the slice attributes of an ObjectReosurce.
-func objectAttrDecoder(o *go3mf.Object, a encoding.Attr) (errs error) {
+func objectAttrDecoder(o *go3mf.Object, a encoding.XMLAttr) (errs error) {
 	switch a.Name.Local {
 	case attrSliceRefID:
 		val, err := strconv.ParseUint(string(a.Value), 10, 32)
@@ -76,7 +76,7 @@ func (d *sliceStackDecoder) Child(name xml.Name) (child encoding.ElementDecoder)
 	return
 }
 
-func (d *sliceStackDecoder) Start(attrs []encoding.Attr) error {
+func (d *sliceStackDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	for _, a := range attrs {
 		switch a.Name.Local {
@@ -105,7 +105,7 @@ type sliceRefDecoder struct {
 	resource *SliceStack
 }
 
-func (d *sliceRefDecoder) Start(attrs []encoding.Attr) error {
+func (d *sliceRefDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		sliceStackID uint32
 		path         string
@@ -159,7 +159,7 @@ func (d *sliceDecoder) Child(name xml.Name) (child encoding.ElementDecoder) {
 	return
 }
 
-func (d *sliceDecoder) Start(attrs []encoding.Attr) error {
+func (d *sliceDecoder) Start(attrs []encoding.XMLAttr) error {
 	d.polygonDecoder.ew = d
 	d.polygonVerticesDecoder.ew = d
 	d.polygonDecoder.slice = &d.slice
@@ -188,7 +188,7 @@ type polygonVerticesDecoder struct {
 	ew                   encoding.ErrorWrapper
 }
 
-func (d *polygonVerticesDecoder) Start(_ []encoding.Attr) error {
+func (d *polygonVerticesDecoder) Start(_ []encoding.XMLAttr) error {
 	d.polygonVertexDecoder.slice = d.slice
 	return nil
 }
@@ -209,7 +209,7 @@ type polygonVertexDecoder struct {
 	slice *Slice
 }
 
-func (d *polygonVertexDecoder) Start(attrs []encoding.Attr) error {
+func (d *polygonVertexDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		p    go3mf.Point2D
 		errs error
@@ -252,7 +252,7 @@ func (d *polygonDecoder) Child(name xml.Name) (child encoding.ElementDecoder) {
 	return
 }
 
-func (d *polygonDecoder) Start(attrs []encoding.Attr) error {
+func (d *polygonDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	polygonIndex := len(d.slice.Polygons)
 	d.slice.Polygons = append(d.slice.Polygons, Polygon{})
@@ -278,7 +278,7 @@ type polygonSegmentDecoder struct {
 	polygon *Polygon
 }
 
-func (d *polygonSegmentDecoder) Start(attrs []encoding.Attr) error {
+func (d *polygonSegmentDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		segment      Segment
 		hasP1, hasP2 bool

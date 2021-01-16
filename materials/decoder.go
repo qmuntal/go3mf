@@ -26,7 +26,7 @@ func (e Spec) NewElementDecoder(ctx encoding.ElementDecoderContext) (child encod
 	return
 }
 
-func (e Spec) DecodeAttribute(_ interface{}, _ encoding.Attr) error { return nil }
+func (e Spec) DecodeAttribute(_ interface{}, _ encoding.XMLAttr) error { return nil }
 
 type colorGroupDecoder struct {
 	baseDecoder
@@ -51,7 +51,7 @@ func (d *colorGroupDecoder) Child(name xml.Name) (child encoding.ElementDecoder)
 	return
 }
 
-func (d *colorGroupDecoder) Start(attrs []encoding.Attr) (errs error) {
+func (d *colorGroupDecoder) Start(attrs []encoding.XMLAttr) (errs error) {
 	d.colorDecoder.resource = &d.resource
 	for _, a := range attrs {
 		if a.Name.Space == "" && a.Name.Local == attrID {
@@ -71,7 +71,7 @@ type colorDecoder struct {
 	resource *ColorGroup
 }
 
-func (d *colorDecoder) Start(attrs []encoding.Attr) error {
+func (d *colorDecoder) Start(attrs []encoding.XMLAttr) error {
 	for _, a := range attrs {
 		if a.Name.Space == "" && a.Name.Local == attrColor {
 			c, err := encoding.ParseRGBA(string(a.Value))
@@ -93,7 +93,7 @@ type tex2DCoordDecoder struct {
 	resource *Texture2DGroup
 }
 
-func (d *tex2DCoordDecoder) Start(attrs []encoding.Attr) error {
+func (d *tex2DCoordDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		text TextureCoord
 		errs error
@@ -143,7 +143,7 @@ func (d *tex2DGroupDecoder) Child(name xml.Name) (child encoding.ElementDecoder)
 	return
 }
 
-func (d *tex2DGroupDecoder) Start(attrs []encoding.Attr) error {
+func (d *tex2DGroupDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	d.tex2DCoordDecoder.resource = &d.resource
 	for _, a := range attrs {
@@ -181,7 +181,7 @@ func (d *texture2DDecoder) End() {
 	d.resources.Assets = append(d.resources.Assets, &d.resource)
 }
 
-func (d *texture2DDecoder) Start(attrs []encoding.Attr) error {
+func (d *texture2DDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	for _, a := range attrs {
 		if a.Name.Space != "" {
@@ -235,7 +235,7 @@ func (d *compositeMaterialsDecoder) Child(name xml.Name) (child encoding.Element
 	return
 }
 
-func (d *compositeMaterialsDecoder) Start(attrs []encoding.Attr) error {
+func (d *compositeMaterialsDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	d.compositeDecoder.resource = &d.resource
 	for _, a := range attrs {
@@ -276,7 +276,7 @@ type compositeDecoder struct {
 	resource *CompositeMaterials
 }
 
-func (d *compositeDecoder) Start(attrs []encoding.Attr) error {
+func (d *compositeDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		composite Composite
 		errs      error
@@ -322,7 +322,7 @@ func (d *multiPropertiesDecoder) Child(name xml.Name) (child encoding.ElementDec
 	return
 }
 
-func (d *multiPropertiesDecoder) Start(attrs []encoding.Attr) error {
+func (d *multiPropertiesDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	d.multiDecoder.resource = &d.resource
 	for _, a := range attrs {
@@ -362,7 +362,7 @@ type multiDecoder struct {
 	resource *MultiProperties
 }
 
-func (d *multiDecoder) Start(attrs []encoding.Attr) error {
+func (d *multiDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		multi Multi
 		errs  error

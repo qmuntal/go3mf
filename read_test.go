@@ -46,7 +46,7 @@ func (f *fakeSpec) NewElementDecoder(ctx encoding.ElementDecoderContext) encodin
 	return nil
 }
 
-func (f *fakeSpec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) error {
+func (f *fakeSpec) DecodeAttribute(parentNode interface{}, attr encoding.XMLAttr) error {
 	switch t := parentNode.(type) {
 	case *Object:
 		t.AnyAttr = append(t.AnyAttr, &fakeAttr{string(attr.Value)})
@@ -94,7 +94,7 @@ type fakeAssetDecoder struct {
 	resources *Resources
 }
 
-func (f *fakeAssetDecoder) Start(att []encoding.Attr) error {
+func (f *fakeAssetDecoder) Start(att []encoding.XMLAttr) error {
 	id, _ := strconv.ParseUint(string(att[0].Value), 10, 32)
 	f.resources.Assets = append(f.resources.Assets, &fakeAsset{ID: uint32(id)})
 	return nil

@@ -11,7 +11,7 @@ func (e Spec) NewElementDecoder(_ encoding.ElementDecoderContext) encoding.Eleme
 	return nil
 }
 
-func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) (errs error) {
+func (e Spec) DecodeAttribute(parentNode interface{}, attr encoding.XMLAttr) (errs error) {
 	switch t := parentNode.(type) {
 	case *go3mf.Build:
 		if attr.Name.Local == attrProdUUID {

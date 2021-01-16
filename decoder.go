@@ -44,7 +44,7 @@ func (d *modelDecoder) Child(name xml.Name) (child encoding.ElementDecoder) {
 	return
 }
 
-func (d *modelDecoder) Start(attrs []encoding.Attr) (err error) {
+func (d *modelDecoder) Start(attrs []encoding.XMLAttr) (err error) {
 	if !d.isRoot {
 		return
 	}
@@ -78,7 +78,7 @@ func (d *modelDecoder) Start(attrs []encoding.Attr) (err error) {
 	return
 }
 
-func (d *modelDecoder) noCoreAttribute(a encoding.Attr) (err error) {
+func (d *modelDecoder) noCoreAttribute(a encoding.XMLAttr) (err error) {
 	switch a.Name.Space {
 	case nsXML:
 		if a.Name.Local == attrLang {
@@ -118,7 +118,7 @@ type metadataDecoder struct {
 	metadata  Metadata
 }
 
-func (d *metadataDecoder) Start(attrs []encoding.Attr) error {
+func (d *metadataDecoder) Start(attrs []encoding.XMLAttr) error {
 	for _, a := range attrs {
 		if a.Name.Space != "" {
 			continue
@@ -169,7 +169,7 @@ func (d *buildDecoder) Wrap(err error) error {
 	return specerr.Wrap(err, d.build)
 }
 
-func (d *buildDecoder) Start(attrs []encoding.Attr) error {
+func (d *buildDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	for _, a := range attrs {
 		if ext, ok := d.ctx.extensionDecoder[a.Name.Space]; ok {
@@ -205,7 +205,7 @@ func (d *buildItemDecoder) Child(name xml.Name) (child encoding.ElementDecoder) 
 	return
 }
 
-func (d *buildItemDecoder) Start(attrs []encoding.Attr) error {
+func (d *buildItemDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	for _, a := range attrs {
 		if a.Name.Space == "" {
@@ -220,7 +220,7 @@ func (d *buildItemDecoder) Start(attrs []encoding.Attr) error {
 	return errs
 }
 
-func (d *buildItemDecoder) parseCoreAttr(a encoding.Attr) (errs error) {
+func (d *buildItemDecoder) parseCoreAttr(a encoding.XMLAttr) (errs error) {
 	switch a.Name.Local {
 	case attrObjectID:
 		val, err := strconv.ParseUint(string(a.Value), 10, 32)
@@ -291,7 +291,7 @@ func (d *baseMaterialsDecoder) Child(name xml.Name) (child encoding.ElementDecod
 	return
 }
 
-func (d *baseMaterialsDecoder) Start(attrs []encoding.Attr) error {
+func (d *baseMaterialsDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	d.baseMaterialDecoder.resource = &d.resource
 	for _, a := range attrs {
@@ -315,7 +315,7 @@ type baseMaterialDecoder struct {
 	resource *BaseMaterials
 }
 
-func (d *baseMaterialDecoder) Start(attrs []encoding.Attr) error {
+func (d *baseMaterialDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		name      string
 		baseColor color.RGBA
@@ -347,7 +347,7 @@ type meshDecoder struct {
 	ew       encoding.ErrorWrapper
 }
 
-func (d *meshDecoder) Start(_ []encoding.Attr) error {
+func (d *meshDecoder) Start(_ []encoding.XMLAttr) error {
 	d.resource.Mesh = new(Mesh)
 	return nil
 }
@@ -380,7 +380,7 @@ type verticesDecoder struct {
 	ew            encoding.ErrorWrapper
 }
 
-func (d *verticesDecoder) Start(_ []encoding.Attr) error {
+func (d *verticesDecoder) Start(_ []encoding.XMLAttr) error {
 	d.vertexDecoder.mesh = d.mesh
 	return nil
 }
@@ -401,7 +401,7 @@ type vertexDecoder struct {
 	mesh *Mesh
 }
 
-func (d *vertexDecoder) Start(attrs []encoding.Attr) error {
+func (d *vertexDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		x, y, z float32
 		errs    error
@@ -438,7 +438,7 @@ func (d *trianglesDecoder) Wrap(err error) error {
 	return d.ew.Wrap(err)
 }
 
-func (d *trianglesDecoder) Start(_ []encoding.Attr) error {
+func (d *trianglesDecoder) Start(_ []encoding.XMLAttr) error {
 	d.triangleDecoder.mesh = d.resource.Mesh
 	d.triangleDecoder.defaultPropertyID = d.resource.PID
 	d.triangleDecoder.defaultPropertyIndex = d.resource.PIndex
@@ -462,7 +462,7 @@ type triangleDecoder struct {
 	defaultPropertyIndex, defaultPropertyID uint32
 }
 
-func (d *triangleDecoder) Start(attrs []encoding.Attr) error {
+func (d *triangleDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		t                           Triangle
 		pid, p1, p2, p3             uint32
@@ -534,7 +534,7 @@ func (d *objectDecoder) End() {
 	d.resources.Objects = append(d.resources.Objects, &d.resource)
 }
 
-func (d *objectDecoder) Start(attrs []encoding.Attr) error {
+func (d *objectDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	for _, a := range attrs {
 		if a.Name.Space == "" {
@@ -566,7 +566,7 @@ func (d *objectDecoder) Child(name xml.Name) (child encoding.ElementDecoder) {
 	return
 }
 
-func (d *objectDecoder) parseCoreAttr(a encoding.Attr) (errs error) {
+func (d *objectDecoder) parseCoreAttr(a encoding.XMLAttr) (errs error) {
 	switch a.Name.Local {
 	case attrID:
 		id, err := strconv.ParseUint(string(a.Value), 10, 32)
@@ -610,7 +610,7 @@ type componentsDecoder struct {
 	ew               encoding.ErrorWrapper
 }
 
-func (d *componentsDecoder) Start(_ []encoding.Attr) error {
+func (d *componentsDecoder) Start(_ []encoding.XMLAttr) error {
 	d.resource.Components = make([]*Component, 0)
 	d.componentDecoder.resource = d.resource
 	d.componentDecoder.ctx = d.ctx
@@ -634,7 +634,7 @@ type componentDecoder struct {
 	resource *Object
 }
 
-func (d *componentDecoder) Start(attrs []encoding.Attr) error {
+func (d *componentDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		component Component
 		errs      error
@@ -668,7 +668,7 @@ func (d *componentDecoder) Start(attrs []encoding.Attr) error {
 type baseDecoder struct {
 }
 
-func (d *baseDecoder) Start([]encoding.Attr) error { return nil }
+func (d *baseDecoder) Start([]encoding.XMLAttr) error { return nil }
 func (d *baseDecoder) End()                        {}
 
 type topLevelDecoder struct {

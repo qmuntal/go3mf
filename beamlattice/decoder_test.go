@@ -186,5 +186,5 @@ func TestDecode_warns(t *testing.T) {
 }
 
 func TestSpec_DecodeAttribute(t *testing.T) {
-	new(Spec).DecodeAttribute(nil, encoding.Attr{})
+	new(Spec).DecodeAttribute(nil, encoding.XMLAttr{})
 }

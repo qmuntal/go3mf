@@ -86,7 +86,7 @@ func decodeModelFile(ctx context.Context, r io.Reader, model *Model, path string
 				names = append(names, currentName)
 				currentName = tp.Name
 				currentDecoder = tmpDecoder
-				if err := currentDecoder.Start(*(*[]encoding.Attr)(unsafe.Pointer(&tp.Attr))); err != nil {
+				if err := currentDecoder.Start(*(*[]encoding.XMLAttr)(unsafe.Pointer(&tp.Attr))); err != nil {
 					if childDecoder, ok := childDecoder.(encoding.ErrorWrapper); ok {
 						err = childDecoder.Wrap(err)
 					}

@@ -16,7 +16,7 @@ func (e Spec) NewElementDecoder(ctx encoding.ElementDecoderContext) encoding.Ele
 	return nil
 }
 
-func (e Spec) DecodeAttribute(_ interface{}, _ encoding.Attr) error { return nil }
+func (e Spec) DecodeAttribute(_ interface{}, _ encoding.XMLAttr) error { return nil }
 
 type beamLatticeDecoder struct {
 	baseDecoder
@@ -24,7 +24,7 @@ type beamLatticeDecoder struct {
 	ew   encoding.ErrorWrapper
 }
 
-func (d *beamLatticeDecoder) Start(attrs []encoding.Attr) error {
+func (d *beamLatticeDecoder) Start(attrs []encoding.XMLAttr) error {
 	var errs error
 	beamLattice := new(BeamLattice)
 	d.mesh.Any = append(d.mesh.Any, beamLattice)
@@ -99,7 +99,7 @@ type beamsDecoder struct {
 	ew          encoding.ErrorWrapper
 }
 
-func (d *beamsDecoder) Start(_ []encoding.Attr) error {
+func (d *beamsDecoder) Start(_ []encoding.XMLAttr) error {
 	d.beamDecoder.mesh = d.mesh
 	return nil
 }
@@ -120,7 +120,7 @@ type beamDecoder struct {
 	mesh *go3mf.Mesh
 }
 
-func (d *beamDecoder) Start(attrs []encoding.Attr) error {
+func (d *beamDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		beam             Beam
 		hasCap1, hasCap2 bool
@@ -219,7 +219,7 @@ func (d *beamSetDecoder) End() {
 	beamLattice.BeamSets = append(beamLattice.BeamSets, d.beamSet)
 }
 
-func (d *beamSetDecoder) Start(attrs []encoding.Attr) error {
+func (d *beamSetDecoder) Start(attrs []encoding.XMLAttr) error {
 	d.beamRefDecoder.beamSet = &d.beamSet
 	for _, a := range attrs {
 		if a.Name.Space != "" {
@@ -251,7 +251,7 @@ type beamRefDecoder struct {
 	beamSet *BeamSet
 }
 
-func (d *beamRefDecoder) Start(attrs []encoding.Attr) error {
+func (d *beamRefDecoder) Start(attrs []encoding.XMLAttr) error {
 	var (
 		val  uint64
 		errs error
@@ -276,5 +276,5 @@ func (d *beamRefDecoder) Start(attrs []encoding.Attr) error {
 type baseDecoder struct {
 }
 
-func (d *baseDecoder) Start([]encoding.Attr) error { return nil }
+func (d *baseDecoder) Start([]encoding.XMLAttr) error { return nil }
 func (d *baseDecoder) End()                        {}
