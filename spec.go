@@ -30,15 +30,3 @@ type objectPather interface {
 type propertyGroup interface {
 	Len() int
 }
-
-type modelValidator interface {
-	ValidateModel() error
-}
-
-type assetValidator interface {
-	ValidateAsset(string, Asset) error
-}
-
-type objectValidator interface {
-	ValidateObject(string, *Object) error
-}

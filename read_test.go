@@ -16,15 +16,14 @@ import (
 
 	"github.com/go-test/deep"
 	specerr "github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
 	"github.com/stretchr/testify/mock"
 )
 
 const fakeExtension = "http://dummy.com/fake_ext"
 
-var _ modelValidator = new(fakeSpec)
-var _ assetValidator = new(fakeSpec)
-var _ objectValidator = new(fakeSpec)
+var _ spec.ValidatorSpec = new(fakeSpec)
 var _ encoding.Decoder = new(fakeSpec)
 var _ encoding.PostProcessorDecoder = new(fakeSpec)
 var _ encoding.CharDataElementDecoder = new(metadataDecoder)
@@ -66,22 +65,17 @@ func (f *fakeSpec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) e
 	return nil
 }
 
-func (f *fakeSpec) ValidateObject(_ string, _ *Object) error {
-	return nil
-}
-
-func (f *fakeSpec) ValidateAsset(_ string, _ Asset) error {
-	return nil
-}
-
-func (f *fakeSpec) ValidateModel() error {
-	var errs []error
-	if len(f.m.Build.AnyAttr) == 1 {
-		if _, ok := f.m.Build.AnyAttr[0].(*fakeAttr); ok {
-			errs = append(errs, errors.New("Build: fake"))
+func (f *fakeSpec) Validate(_ string, e interface{}) error {
+	if e, ok := e.(*Model); ok {
+		var errs []error
+		if len(e.Build.AnyAttr) == 1 {
+			if _, ok := e.Build.AnyAttr[0].(*fakeAttr); ok {
+				errs = append(errs, errors.New("Build: fake"))
+			}
 		}
+		return specerr.Append(nil, errs...)
 	}
-	return specerr.Append(nil, errs...)
+	return nil
 }
 
 type fakeAsset struct {

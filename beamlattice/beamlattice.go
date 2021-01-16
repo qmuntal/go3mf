@@ -2,6 +2,7 @@ package beamlattice
 
 import (
 	"errors"
+
 	"github.com/qmuntal/go3mf"
 )
 

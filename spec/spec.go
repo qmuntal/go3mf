@@ -1,19 +1,13 @@
 package spec
 
-import "github.com/qmuntal/go3mf"
-
 type PropertyGroup interface {
 	Len() int
 }
 
-type ModelValidator interface {
-	ValidateModel() error
-}
-
-type AssetValidator interface {
-	ValidateAsset(string, go3mf.Asset) error
-}
-
-type ObjectValidator interface {
-	ValidateObject(string, *go3mf.Object) error
+// Validator is the interface implemented by specs
+// that can validate an element.
+//
+// Currently element can be a Model, Asset or Object.
+type ValidatorSpec interface {
+	Validate(path string, element interface{}) error
 }

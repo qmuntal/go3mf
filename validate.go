@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 )
 
 func (m *Model) sortedSpecs() []string {
@@ -56,8 +57,8 @@ func (m *Model) Validate() error {
 	sortedSpecs := m.sortedSpecs()
 	for _, ns := range sortedSpecs {
 		ext := m.Specs[ns]
-		if ext, ok := ext.(modelValidator); ok {
-			errs = errors.Append(errs, ext.ValidateModel())
+		if ext, ok := ext.(spec.ValidatorSpec); ok {
+			errs = errors.Append(errs, ext.Validate(m.Path, m))
 		}
 	}
 
@@ -183,8 +184,8 @@ func (res *Resources) validate(m *Model, path string) error {
 		sortedSpecs := m.sortedSpecs()
 		for _, ns := range sortedSpecs {
 			ext := m.Specs[ns]
-			if ext, ok := ext.(assetValidator); ok {
-				aErrs = errors.Append(aErrs, ext.ValidateAsset(path, r))
+			if ext, ok := ext.(spec.ValidatorSpec); ok {
+				aErrs = errors.Append(aErrs, ext.Validate(path, r))
 			}
 		}
 		errs = errors.Append(errs, errors.WrapIndex(aErrs, r, i))
@@ -243,8 +244,8 @@ func (r *Object) Validate(m *Model, path string) error {
 	sortedSpecs := m.sortedSpecs()
 	for _, ns := range sortedSpecs {
 		ext := m.Specs[ns]
-		if ext, ok := ext.(objectValidator); ok {
-			errs = errors.Append(errs, ext.ValidateObject(path, r))
+		if ext, ok := ext.(spec.ValidatorSpec); ok {
+			errs = errors.Append(errs, ext.Validate(path, r))
 		}
 	}
 	return errs
