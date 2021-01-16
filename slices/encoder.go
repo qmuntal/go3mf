@@ -9,7 +9,7 @@ import (
 )
 
 // Marshal3MFAttr encodes the resource attributes.
-func (s *ObjectAttr) Marshal3MFAttr(_ encoding.Encoder) ([]xml.Attr, error) {
+func (s *ObjectAttr) Marshal3MFAttr(_ encoding.XMLEncoder) ([]xml.Attr, error) {
 	return []xml.Attr{
 		{Name: xml.Name{Space: Namespace, Local: attrSliceRefID}, Value: strconv.FormatUint(uint64(s.SliceStackID), 10)},
 		{Name: xml.Name{Space: Namespace, Local: attrMeshRes}, Value: s.MeshResolution.String()},
@@ -17,7 +17,7 @@ func (s *ObjectAttr) Marshal3MFAttr(_ encoding.Encoder) ([]xml.Attr, error) {
 }
 
 // Marshal3MF encodes the resource.
-func (s *SliceStack) Marshal3MF(x encoding.Encoder) error {
+func (s *SliceStack) Marshal3MF(x encoding.XMLEncoder) error {
 	xs := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrSliceStack}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(s.ID), 10)},
 	}}
@@ -43,7 +43,7 @@ func (s *SliceStack) Marshal3MF(x encoding.Encoder) error {
 	return nil
 }
 
-func (s *Slice) marshal3MF(x encoding.Encoder) {
+func (s *Slice) marshal3MF(x encoding.XMLEncoder) {
 	xs := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrSlice}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrZTop}, Value: strconv.FormatFloat(float64(s.TopZ), 'f', x.FloatPresicion(), 32)},
 	}}
@@ -55,7 +55,7 @@ func (s *Slice) marshal3MF(x encoding.Encoder) {
 	x.EncodeToken(xs.End())
 }
 
-func marshalPolygons(x encoding.Encoder, ply []Polygon) {
+func marshalPolygons(x encoding.XMLEncoder, ply []Polygon) {
 	for _, p := range ply {
 		xp := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrPolygon}, Attr: []xml.Attr{
 			{Name: xml.Name{Local: attrStartV}, Value: strconv.FormatUint(uint64(p.StartV), 10)},
@@ -87,7 +87,7 @@ func marshalPolygons(x encoding.Encoder, ply []Polygon) {
 	}
 }
 
-func marshalVertices(x encoding.Encoder, vs []go3mf.Point2D) {
+func marshalVertices(x encoding.XMLEncoder, vs []go3mf.Point2D) {
 	xv := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrVertices}}
 	x.EncodeToken(xv)
 	x.SetAutoClose(true)

@@ -20,13 +20,13 @@ type Relationship struct {
 // Marshaler is the interface implemented by objects
 // that can marshal themselves into valid XML elements.
 type Marshaler interface {
-	Marshal3MF(Encoder) error
+	Marshal3MF(XMLEncoder) error
 }
 
 // MarshalerAttr is the interface implemented by objects that can marshal
 // themselves into valid XML attributes.
 type MarshalerAttr interface {
-	Marshal3MFAttr(Encoder) ([]xml.Attr, error)
+	Marshal3MFAttr(XMLEncoder) ([]xml.Attr, error)
 }
 
 type ElementDecoderContext struct {
@@ -65,10 +65,10 @@ type CharDataElementDecoder interface {
 	CharData([]byte)
 }
 
-// Encoder provides de necessary methods to encode specs.
+// XMLEncoder provides de necessary methods to encode specs.
 // It should not be implemented by spec authors but
 // will be provided be go3mf itself.
-type Encoder interface {
+type XMLEncoder interface {
 	AddRelationship(r Relationship)
 	FloatPresicion() int
 	EncodeToken(t xml.Token)

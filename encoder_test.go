@@ -15,14 +15,14 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func (f *fakeAttr) Marshal3MFAttr(_ encoding.Encoder) ([]xml.Attr, error) {
+func (f *fakeAttr) Marshal3MFAttr(_ encoding.XMLEncoder) ([]xml.Attr, error) {
 	return []xml.Attr{
 		{Name: xml.Name{Space: fakeExtension, Local: "value"}, Value: f.Value},
 	}, nil
 }
 
 // Marshal3MF encodes the resource.
-func (f *fakeAsset) Marshal3MF(x encoding.Encoder) error {
+func (f *fakeAsset) Marshal3MF(x encoding.XMLEncoder) error {
 	xs := xml.StartElement{Name: xml.Name{Space: fakeExtension, Local: "fakeasset"}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(f.ID), 10)},
 	}}

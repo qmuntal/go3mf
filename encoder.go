@@ -177,7 +177,7 @@ func (e *Encoder) writeAttachements(att []Attachment) error {
 	return nil
 }
 
-func (e *Encoder) modelToken(x encoding.Encoder, m *Model, isRoot bool) (xml.StartElement, error) {
+func (e *Encoder) modelToken(x encoding.XMLEncoder, m *Model, isRoot bool) (xml.StartElement, error) {
 	attrs := []xml.Attr{
 		{Name: xml.Name{Local: attrXmlns}, Value: Namespace},
 		{Name: xml.Name{Local: attrUnit}, Value: m.Units.String()},
@@ -210,7 +210,7 @@ func (e *Encoder) modelToken(x encoding.Encoder, m *Model, isRoot bool) (xml.Sta
 	return tm, nil
 }
 
-func (e *Encoder) writeChildModel(x encoding.Encoder, m *Model, child *ChildModel) error {
+func (e *Encoder) writeChildModel(x encoding.XMLEncoder, m *Model, child *ChildModel) error {
 	tm, _ := e.modelToken(x, m, false) // error already checked before
 	x.EncodeToken(tm)
 
@@ -226,7 +226,7 @@ func (e *Encoder) writeChildModel(x encoding.Encoder, m *Model, child *ChildMode
 	return x.Flush()
 }
 
-func (e *Encoder) writeModel(x encoding.Encoder, m *Model) error {
+func (e *Encoder) writeModel(x encoding.XMLEncoder, m *Model) error {
 	tm, err := e.modelToken(x, m, true)
 	if err != nil {
 		return err
@@ -243,14 +243,14 @@ func (e *Encoder) writeModel(x encoding.Encoder, m *Model) error {
 	return x.Flush()
 }
 
-func (e *Encoder) writeMetadataGroup(x encoding.Encoder, m []Metadata) {
+func (e *Encoder) writeMetadataGroup(x encoding.XMLEncoder, m []Metadata) {
 	xm := xml.StartElement{Name: xml.Name{Local: attrMetadataGroup}}
 	x.EncodeToken(xm)
 	e.writeMetadata(x, m)
 	x.EncodeToken(xm.End())
 }
 
-func (e *Encoder) writeBuild(x encoding.Encoder, m *Model) {
+func (e *Encoder) writeBuild(x encoding.XMLEncoder, m *Model) {
 	xb := xml.StartElement{Name: xml.Name{Local: attrBuild}}
 	m.Build.AnyAttr.encode(x, &xb)
 	x.EncodeToken(xb)
@@ -284,7 +284,7 @@ func (e *Encoder) writeBuild(x encoding.Encoder, m *Model) {
 	x.EncodeToken(xb.End())
 }
 
-func (e *Encoder) writeResources(x encoding.Encoder, rs *Resources) error {
+func (e *Encoder) writeResources(x encoding.XMLEncoder, rs *Resources) error {
 	xt := xml.StartElement{Name: xml.Name{Local: attrResources}}
 	x.EncodeToken(xt)
 	for _, r := range rs.Assets {
@@ -308,7 +308,7 @@ func (e *Encoder) writeResources(x encoding.Encoder, rs *Resources) error {
 	return nil
 }
 
-func (e *Encoder) writeMetadata(x encoding.Encoder, metadata []Metadata) {
+func (e *Encoder) writeMetadata(x encoding.XMLEncoder, metadata []Metadata) {
 	for _, md := range metadata {
 		name := md.Name.Local
 		if md.Name.Space != "" {
@@ -333,7 +333,7 @@ func (e *Encoder) writeMetadata(x encoding.Encoder, metadata []Metadata) {
 	}
 }
 
-func (e *Encoder) writeObject(x encoding.Encoder, r *Object) {
+func (e *Encoder) writeObject(x encoding.XMLEncoder, r *Object) {
 	xo := xml.StartElement{Name: xml.Name{Local: attrObject}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(r.ID), 10)},
 	}}
@@ -377,7 +377,7 @@ func (e *Encoder) writeObject(x encoding.Encoder, r *Object) {
 	x.EncodeToken(xo.End())
 }
 
-func (e *Encoder) writeComponents(x encoding.Encoder, comps []*Component) {
+func (e *Encoder) writeComponents(x encoding.XMLEncoder, comps []*Component) {
 	xcs := xml.StartElement{Name: xml.Name{Local: attrComponents}}
 	x.EncodeToken(xcs)
 	x.SetAutoClose(true)
@@ -397,7 +397,7 @@ func (e *Encoder) writeComponents(x encoding.Encoder, comps []*Component) {
 	x.EncodeToken(xcs.End())
 }
 
-func (e *Encoder) writeMesh(x encoding.Encoder, r *Object, m *Mesh) {
+func (e *Encoder) writeMesh(x encoding.XMLEncoder, r *Object, m *Mesh) {
 	xm := xml.StartElement{Name: xml.Name{Local: attrMesh}}
 	m.AnyAttr.encode(x, &xm)
 	x.EncodeToken(xm)
@@ -456,7 +456,7 @@ func (e *Encoder) writeMesh(x encoding.Encoder, r *Object, m *Mesh) {
 	x.EncodeToken(xm.End())
 }
 
-func (r *BaseMaterials) Marshal3MF(x encoding.Encoder) error {
+func (r *BaseMaterials) Marshal3MF(x encoding.XMLEncoder) error {
 	xt := xml.StartElement{Name: xml.Name{Local: attrBaseMaterials}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(r.ID), 10)},
 	}}
@@ -476,7 +476,7 @@ func (r *BaseMaterials) Marshal3MF(x encoding.Encoder) error {
 	return nil
 }
 
-func (e AnyAttr) encode(x encoding.Encoder, start *xml.StartElement) {
+func (e AnyAttr) encode(x encoding.XMLEncoder, start *xml.StartElement) {
 	for _, ext := range e {
 		if att, err := ext.Marshal3MFAttr(x); err == nil {
 			start.Attr = append(start.Attr, att...)
@@ -484,7 +484,7 @@ func (e AnyAttr) encode(x encoding.Encoder, start *xml.StartElement) {
 	}
 }
 
-func (e Any) encode(x encoding.Encoder) error {
+func (e Any) encode(x encoding.XMLEncoder) error {
 	for _, ext := range e {
 		if err := ext.Marshal3MF(x); err == nil {
 			return err

@@ -9,7 +9,7 @@ import (
 )
 
 // Marshal3MF encodes the resource.
-func (r *ColorGroup) Marshal3MF(x encoding.Encoder) error {
+func (r *ColorGroup) Marshal3MF(x encoding.XMLEncoder) error {
 	xs := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrColorGroup}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(r.ID), 10)},
 	}}
@@ -26,7 +26,7 @@ func (r *ColorGroup) Marshal3MF(x encoding.Encoder) error {
 }
 
 // Marshal3MF encodes the resource.
-func (r *Texture2DGroup) Marshal3MF(x encoding.Encoder) error {
+func (r *Texture2DGroup) Marshal3MF(x encoding.XMLEncoder) error {
 	xs := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrTexture2DGroup}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(r.ID), 10)},
 		{Name: xml.Name{Local: attrTexID}, Value: strconv.FormatUint(uint64(r.TextureID), 10)},
@@ -46,7 +46,7 @@ func (r *Texture2DGroup) Marshal3MF(x encoding.Encoder) error {
 }
 
 // Marshal3MF encodes the resource.
-func (r *CompositeMaterials) Marshal3MF(x encoding.Encoder) error {
+func (r *CompositeMaterials) Marshal3MF(x encoding.XMLEncoder) error {
 	indices := make([]string, len(r.Indices))
 	for i, idx := range r.Indices {
 		indices[i] = strconv.FormatUint(uint64(idx), 10)
@@ -73,7 +73,7 @@ func (r *CompositeMaterials) Marshal3MF(x encoding.Encoder) error {
 }
 
 // Marshal3MF encodes the resource.
-func (r *MultiProperties) Marshal3MF(x encoding.Encoder) error {
+func (r *MultiProperties) Marshal3MF(x encoding.XMLEncoder) error {
 	pids := make([]string, len(r.PIDs))
 	for i, idx := range r.PIDs {
 		pids[i] = strconv.FormatUint(uint64(idx), 10)
@@ -104,7 +104,7 @@ func (r *MultiProperties) Marshal3MF(x encoding.Encoder) error {
 }
 
 // Marshal3MF encodes the resource.
-func (r *Texture2D) Marshal3MF(x encoding.Encoder) error {
+func (r *Texture2D) Marshal3MF(x encoding.XMLEncoder) error {
 	x.AddRelationship(encoding.Relationship{Path: r.Path, Type: RelTypeTexture3D})
 	xs := xml.StartElement{Name: xml.Name{Space: Namespace, Local: attrTexture2D}, Attr: []xml.Attr{
 		{Name: xml.Name{Local: attrID}, Value: strconv.FormatUint(uint64(r.ID), 10)},
