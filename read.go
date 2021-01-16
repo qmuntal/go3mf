@@ -61,12 +61,12 @@ func (r *ReadCloser) Close() error {
 func decodeModelFile(ctx context.Context, r io.Reader, model *Model, path string, isRoot, strict bool) error {
 	x := xml3mf.NewDecoder(r)
 	scanner := decoderContext{
-		extensionDecoder: make(map[string]encoding.Decoder),
+		extensionDecoder: make(map[string]encoding.DecoderSpec),
 		isRoot:           isRoot,
 		modelPath:        path,
 	}
 	for _, ext := range model.Specs {
-		if ext, ok := ext.(encoding.Decoder); ok {
+		if ext, ok := ext.(encoding.DecoderSpec); ok {
 			scanner.extensionDecoder[ext.Namespace()] = ext
 		}
 	}
@@ -327,7 +327,7 @@ func (f *fakePackageFile) Open() (io.ReadCloser, error) {
 // A decoderContext is a 3mf model file scanning state machine.
 type decoderContext struct {
 	Err              specerr.List
-	extensionDecoder map[string]encoding.Decoder
+	extensionDecoder map[string]encoding.DecoderSpec
 	modelPath        string
 	isRoot           bool
 }

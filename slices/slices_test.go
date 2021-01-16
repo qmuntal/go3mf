@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/qmuntal/go3mf"
-	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
+	"github.com/qmuntal/go3mf/spec/validation"
 )
 
 var _ go3mf.Asset = new(SliceStack)
-var _ spec.Validator = new(Spec)
-var _ encoding.Decoder = new(Spec)
+var _ validation.ValidatorSpec = new(Spec)
+var _ encoding.DecoderSpec = new(Spec)
 var _ encoding.Marshaler = new(SliceStack)
 var _ encoding.MarshalerAttr = new(ObjectAttr)
 

@@ -35,9 +35,9 @@ type ElementDecoderContext struct {
 	ErrorWrapper  ErrorWrapper
 }
 
-// Decoder must be implemented by specs that want to support
+// DecoderSpec must be implemented by specs that want to support
 // direct decoding from xml.
-type Decoder interface {
+type DecoderSpec interface {
 	spec.Spec
 	DecodeAttribute(parent interface{}, attr XMLAttr) error
 	NewElementDecoder(ElementDecoderContext) ElementDecoder

@@ -8,6 +8,7 @@ import (
 	"github.com/qmuntal/go3mf"
 	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
+	"github.com/qmuntal/go3mf/spec/validation"
 )
 
 var _ go3mf.Asset = new(Texture2D)
@@ -15,18 +16,18 @@ var _ go3mf.Asset = new(Texture2DGroup)
 var _ go3mf.Asset = new(CompositeMaterials)
 var _ go3mf.Asset = new(MultiProperties)
 var _ go3mf.Asset = new(ColorGroup)
-var _ encoding.Decoder = new(Spec)
+var _ encoding.DecoderSpec = new(Spec)
 var _ encoding.Marshaler = new(Texture2D)
 var _ encoding.Marshaler = new(Texture2DGroup)
 var _ encoding.Marshaler = new(CompositeMaterials)
 var _ encoding.Marshaler = new(ColorGroup)
 var _ encoding.Marshaler = new(MultiProperties)
 var _ spec.Spec = new(Spec)
-var _ spec.Validator = new(Spec)
-var _ spec.PropertyGroup = new(ColorGroup)
-var _ spec.PropertyGroup = new(Texture2DGroup)
-var _ spec.PropertyGroup = new(CompositeMaterials)
-var _ spec.PropertyGroup = new(MultiProperties)
+var _ validation.ValidatorSpec = new(Spec)
+var _ validation.PropertyGroup = new(ColorGroup)
+var _ validation.PropertyGroup = new(Texture2DGroup)
+var _ validation.PropertyGroup = new(CompositeMaterials)
+var _ validation.PropertyGroup = new(MultiProperties)
 
 func TestTexture2D_Identify(t *testing.T) {
 	tests := []struct {

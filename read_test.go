@@ -18,13 +18,14 @@ import (
 	specerr "github.com/qmuntal/go3mf/errors"
 	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
+	"github.com/qmuntal/go3mf/spec/validation"
 	"github.com/stretchr/testify/mock"
 )
 
 const fakeExtension = "http://dummy.com/fake_ext"
 
-var _ spec.Validator = new(fakeSpec)
-var _ encoding.Decoder = new(fakeSpec)
+var _ validation.ValidatorSpec = new(fakeSpec)
+var _ encoding.DecoderSpec = new(fakeSpec)
 var _ encoding.CharDataElementDecoder = new(metadataDecoder)
 var _ encoding.ChildElementDecoder = new(baseMaterialsDecoder)
 

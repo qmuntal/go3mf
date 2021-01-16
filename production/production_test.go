@@ -6,11 +6,12 @@ import (
 	"github.com/qmuntal/go3mf"
 	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
+	"github.com/qmuntal/go3mf/spec/validation"
 )
 
-var _ encoding.Decoder = new(Spec)
+var _ encoding.DecoderSpec = new(Spec)
 var _ spec.Spec = new(Spec)
-var _ spec.Validator = new(Spec)
+var _ validation.ValidatorSpec = new(Spec)
 var _ encoding.MarshalerAttr = new(BuildAttr)
 var _ encoding.MarshalerAttr = new(ItemAttr)
 var _ encoding.MarshalerAttr = new(ComponentAttr)
