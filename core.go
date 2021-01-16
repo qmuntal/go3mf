@@ -580,6 +580,10 @@ type AnyAttr []encoding.MarshalerAttr
 // The key should be the extension namespace.
 type Any []encoding.Marshaler
 
+type objectPather interface {
+	ObjectPath() string
+}
+
 const (
 	nsXML   = "http://www.w3.org/XML/1998/namespace"
 	nsXMLNs = "http://www.w3.org/2000/xmlns/"
