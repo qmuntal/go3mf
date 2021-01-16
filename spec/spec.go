@@ -30,6 +30,7 @@ type PropertyGroup interface {
 // model is guaranteed to be a *Model.
 // element can be a Model, Asset or Object.
 // In the future this list can be expanded.
-type ValidatorSpec interface {
+type Validator interface {
+	Spec
 	Validate(model interface{}, path string, element interface{}) error
 }

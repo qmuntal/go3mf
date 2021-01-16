@@ -23,7 +23,7 @@ import (
 
 const fakeExtension = "http://dummy.com/fake_ext"
 
-var _ spec.ValidatorSpec = new(fakeSpec)
+var _ spec.Validator = new(fakeSpec)
 var _ encoding.Decoder = new(fakeSpec)
 var _ encoding.CharDataElementDecoder = new(metadataDecoder)
 var _ encoding.ChildElementDecoder = new(baseMaterialsDecoder)

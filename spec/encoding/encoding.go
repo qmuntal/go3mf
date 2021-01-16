@@ -2,6 +2,8 @@ package encoding
 
 import (
 	"encoding/xml"
+
+	"github.com/qmuntal/go3mf/spec"
 )
 
 type Attr struct {
@@ -36,9 +38,7 @@ type ElementDecoderContext struct {
 // Decoder must be implemented by specs that want to support
 // direct decoding from xml.
 type Decoder interface {
-	Namespace() string
-	Local() string
-	Required() bool
+	spec.Spec
 	DecodeAttribute(parent interface{}, attr Attr) error
 	NewElementDecoder(ElementDecoderContext) ElementDecoder
 }

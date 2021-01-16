@@ -10,7 +10,7 @@ import (
 
 var _ encoding.Decoder = new(Spec)
 var _ spec.Spec = new(Spec)
-var _ spec.ValidatorSpec = new(Spec)
+var _ spec.Validator = new(Spec)
 var _ encoding.Marshaler = new(BeamLattice)
 
 func TestCapMode_String(t *testing.T) {

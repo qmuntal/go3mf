@@ -57,7 +57,7 @@ func (m *Model) Validate() error {
 	sortedSpecs := m.sortedSpecs()
 	for _, ns := range sortedSpecs {
 		ext := m.Specs[ns]
-		if ext, ok := ext.(spec.ValidatorSpec); ok {
+		if ext, ok := ext.(spec.Validator); ok {
 			errs = errors.Append(errs, ext.Validate(m, m.Path, m))
 		}
 	}
@@ -184,7 +184,7 @@ func (res *Resources) validate(m *Model, path string) error {
 		sortedSpecs := m.sortedSpecs()
 		for _, ns := range sortedSpecs {
 			ext := m.Specs[ns]
-			if ext, ok := ext.(spec.ValidatorSpec); ok {
+			if ext, ok := ext.(spec.Validator); ok {
 				aErrs = errors.Append(aErrs, ext.Validate(m, path, r))
 			}
 		}
@@ -244,7 +244,7 @@ func (r *Object) Validate(m *Model, path string) error {
 	sortedSpecs := m.sortedSpecs()
 	for _, ns := range sortedSpecs {
 		ext := m.Specs[ns]
-		if ext, ok := ext.(spec.ValidatorSpec); ok {
+		if ext, ok := ext.(spec.Validator); ok {
 			errs = errors.Append(errs, ext.Validate(m, path, r))
 		}
 	}
