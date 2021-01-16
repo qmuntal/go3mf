@@ -9,6 +9,7 @@ import (
 	"unsafe"
 
 	specerr "github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
 )
 
@@ -87,7 +88,7 @@ func (d *modelDecoder) noCoreAttribute(a encoding.Attr) (err error) {
 		if ext, ok := d.model.Specs[string(a.Value)]; ok {
 			ext.SetLocal(a.Name.Local)
 		} else {
-			d.model.WithSpec(&UnknownSpec{SpaceName: string(a.Value), LocalName: a.Name.Local})
+			d.model.WithSpec(&spec.UnknownSpec{SpaceName: string(a.Value), LocalName: a.Name.Local})
 		}
 	default:
 		if ext, ok := d.ctx.extensionDecoder[a.Name.Space]; ok {

@@ -7,6 +7,7 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
 )
 
@@ -205,7 +206,7 @@ type Model struct {
 	Resources         Resources
 	Build             Build
 	Attachments       []Attachment
-	Specs             map[string]Spec // space -> spec
+	Specs             map[string]spec.Spec // space -> spec
 	Metadata          []Metadata
 	Childs            map[string]*ChildModel // path -> child
 	RootRelationships []Relationship
@@ -215,9 +216,9 @@ type Model struct {
 }
 
 // WithSpec adds a new extension
-func (m *Model) WithSpec(extension Spec) {
+func (m *Model) WithSpec(extension spec.Spec) {
 	if m.Specs == nil {
-		m.Specs = make(map[string]Spec)
+		m.Specs = make(map[string]spec.Spec)
 	}
 	m.Specs[extension.Namespace()] = extension
 }

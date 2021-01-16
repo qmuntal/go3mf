@@ -7,7 +7,7 @@ import (
 	"github.com/go-test/deep"
 	"github.com/qmuntal/go3mf"
 	"github.com/qmuntal/go3mf/errors"
-	specerr "github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 )
 
 func TestDecode(t *testing.T) {
@@ -32,7 +32,7 @@ func TestDecode(t *testing.T) {
 		AnyAttr: go3mf.AnyAttr{&ObjectAttr{SliceStackID: 3, MeshResolution: ResolutionLow}},
 	}
 
-	want := &go3mf.Model{Path: "/3D/3dmodel.model", Specs: map[string]go3mf.Spec{Namespace: &Spec{LocalName: "s"}},
+	want := &go3mf.Model{Path: "/3D/3dmodel.model", Specs: map[string]spec.Spec{Namespace: &Spec{LocalName: "s"}},
 		Resources: go3mf.Resources{
 			Assets: []go3mf.Asset{sliceStack, sliceStackRef}, Objects: []*go3mf.Object{meshRes},
 		}}
@@ -91,16 +91,16 @@ func TestDecode(t *testing.T) {
 
 func TestDecode_warns(t *testing.T) {
 	want := &errors.List{Errors: []error{
-		fmt.Errorf("Resources@SliceStack#0: %v", specerr.NewParseAttrError("id", true)),
-		fmt.Errorf("Resources@SliceStack#0: %v", specerr.NewParseAttrError("zbottom", false)),
-		fmt.Errorf("Resources@SliceStack#0@Slice#0@Point2D#0: %v", specerr.NewParseAttrError("x", true)),
-		fmt.Errorf("Resources@SliceStack#0@Slice#0@Point2D#1: %v", specerr.NewParseAttrError("y", true)),
-		fmt.Errorf("Resources@SliceStack#0@Slice#1: %v", specerr.NewParseAttrError("ztop", true)),
-		fmt.Errorf("Resources@SliceStack#0@Slice#1@Polygon#0: %v", specerr.NewParseAttrError("startv", true)),
-		fmt.Errorf("Resources@SliceStack#0@Slice#1@Polygon#0@Segment#1: %v", specerr.NewParseAttrError("v2", true)),
-		fmt.Errorf("Resources@SliceStack#0@SliceRef#0: %v", specerr.NewParseAttrError("slicestackid", true)),
-		fmt.Errorf("Resources@Object#0: %v", specerr.NewParseAttrError("meshresolution", false)),
-		fmt.Errorf("Resources@Object#0: %v", specerr.NewParseAttrError("slicestackid", true)),
+		fmt.Errorf("Resources@SliceStack#0: %v", errors.NewParseAttrError("id", true)),
+		fmt.Errorf("Resources@SliceStack#0: %v", errors.NewParseAttrError("zbottom", false)),
+		fmt.Errorf("Resources@SliceStack#0@Slice#0@Point2D#0: %v", errors.NewParseAttrError("x", true)),
+		fmt.Errorf("Resources@SliceStack#0@Slice#0@Point2D#1: %v", errors.NewParseAttrError("y", true)),
+		fmt.Errorf("Resources@SliceStack#0@Slice#1: %v", errors.NewParseAttrError("ztop", true)),
+		fmt.Errorf("Resources@SliceStack#0@Slice#1@Polygon#0: %v", errors.NewParseAttrError("startv", true)),
+		fmt.Errorf("Resources@SliceStack#0@Slice#1@Polygon#0@Segment#1: %v", errors.NewParseAttrError("v2", true)),
+		fmt.Errorf("Resources@SliceStack#0@SliceRef#0: %v", errors.NewParseAttrError("slicestackid", true)),
+		fmt.Errorf("Resources@Object#0: %v", errors.NewParseAttrError("meshresolution", false)),
+		fmt.Errorf("Resources@Object#0: %v", errors.NewParseAttrError("slicestackid", true)),
 	}}
 	got := new(go3mf.Model)
 	got.Path = "/3D/3dmodel.model"

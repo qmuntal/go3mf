@@ -7,6 +7,7 @@ import (
 	"github.com/go-test/deep"
 	"github.com/qmuntal/go3mf"
 	"github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 )
 
 func TestValidate(t *testing.T) {
@@ -29,7 +30,7 @@ func TestValidate(t *testing.T) {
 			AnyAttr: go3mf.AnyAttr{&BuildAttr{"a-b-c-d"}}}}, []error{
 			fmt.Errorf("Build: %v", ErrUUID),
 		}},
-		{"extReq", &go3mf.Model{Specs: map[string]go3mf.Spec{Namespace: &Spec{}},
+		{"extReq", &go3mf.Model{Specs: map[string]spec.Spec{Namespace: &Spec{}},
 			Childs: map[string]*go3mf.ChildModel{"/other.model": {Resources: go3mf.Resources{Objects: []*go3mf.Object{validMesh}}}},
 			Resources: go3mf.Resources{Objects: []*go3mf.Object{
 				{ID: 5, AnyAttr: go3mf.AnyAttr{&ObjectAttr{UUID: "f47ac10b-58cc-0372-8567-0e02b2c3d481"}}, Components: []*go3mf.Component{

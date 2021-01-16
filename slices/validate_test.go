@@ -8,6 +8,7 @@ import (
 	"github.com/go-test/deep"
 	"github.com/qmuntal/go3mf"
 	"github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 )
 
 func TestValidate(t *testing.T) {
@@ -19,7 +20,7 @@ func TestValidate(t *testing.T) {
 	}{
 		{"extRequired", &go3mf.Model{
 			AnyAttr: go3mf.AnyAttr{&ObjectAttr{SliceStackID: 10}},
-			Specs:   map[string]go3mf.Spec{Namespace: &Spec{IsRequired: true}}, Resources: go3mf.Resources{
+			Specs:   map[string]spec.Spec{Namespace: &Spec{IsRequired: true}}, Resources: go3mf.Resources{
 				Assets: []go3mf.Asset{
 					&SliceStack{ID: 1, Slices: []*Slice{{TopZ: 1}}},
 				},

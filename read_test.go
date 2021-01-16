@@ -359,7 +359,7 @@ func TestDecoder_processRootModel(t *testing.T) {
 
 	want := &Model{
 		Units: UnitMillimeter, Language: "en-US", Path: "/3D/3dmodel.model", Thumbnail: "/thumbnail.png",
-		Specs: map[string]Spec{fakeExtension: &fakeSpec{}},
+		Specs: map[string]spec.Spec{fakeExtension: &fakeSpec{}},
 		Resources: Resources{
 			Assets: []Asset{baseMaterials}, Objects: []*Object{meshRes, components},
 		},

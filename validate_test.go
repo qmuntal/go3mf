@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/qmuntal/go3mf/errors"
+	"github.com/qmuntal/go3mf/spec"
 )
 
 func TestValidate(t *testing.T) {
@@ -32,10 +33,10 @@ func TestValidate(t *testing.T) {
 			fmt.Errorf("/3D/3dmodel.model@Relationship#7: %v", errors.ErrOPCContentType),
 			fmt.Errorf("/3D/3dmodel.model@Relationship#7: %v", errors.ErrOPCDuplicatedTicket),
 		}},
-		{"namespaces", &Model{Specs: map[string]Spec{"fake": &UnknownSpec{IsRequired: true}}}, []error{
+		{"namespaces", &Model{Specs: map[string]spec.Spec{"fake": &spec.UnknownSpec{IsRequired: true}}}, []error{
 			errors.ErrRequiredExt,
 		}},
-		{"metadata", &Model{Specs: map[string]Spec{"fake": &UnknownSpec{SpaceName: "fake", LocalName: "f"}}, Metadata: []Metadata{
+		{"metadata", &Model{Specs: map[string]spec.Spec{"fake": &spec.UnknownSpec{SpaceName: "fake", LocalName: "f"}}, Metadata: []Metadata{
 			{Name: xml.Name{Space: "fake", Local: "issue"}}, {Name: xml.Name{Space: "f", Local: "issue"}}, {Name: xml.Name{Space: "fake", Local: "issue"}}, {Name: xml.Name{Local: "issue"}}, {},
 		}}, []error{
 			fmt.Errorf("Metadata#1: %v", errors.ErrMetadataNamespace),

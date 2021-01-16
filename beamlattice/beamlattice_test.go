@@ -9,6 +9,7 @@ import (
 )
 
 var _ encoding.Decoder = new(Spec)
+var _ spec.Spec = new(Spec)
 var _ spec.ValidatorSpec = new(Spec)
 var _ encoding.Marshaler = new(BeamLattice)
 

@@ -220,7 +220,7 @@ func (r *Object) Validate(m *Model, path string) error {
 	if r.Mesh != nil {
 		if r.PID != 0 {
 			if a, ok := res.FindAsset(r.PID); ok {
-				if a, ok := a.(propertyGroup); ok {
+				if a, ok := a.(spec.PropertyGroup); ok {
 					if int(r.PIndex) >= a.Len() {
 						errs = errors.Append(errs, errors.ErrIndexOutOfBounds)
 					}
@@ -281,7 +281,7 @@ func (r *Object) validateMesh(m *Model, path string) error {
 				continue
 			}
 			if a, ok := res.FindAsset(pid); ok {
-				if a, ok := a.(propertyGroup); ok {
+				if a, ok := a.(spec.PropertyGroup); ok {
 					l := a.Len()
 					if int(p1) >= l || int(p2) >= l || int(p3) >= l {
 						errs = errors.Append(errs, errors.WrapIndex(errors.ErrIndexOutOfBounds, face, i))
@@ -316,7 +316,7 @@ func (m *Model) validateNamespaces() error {
 	for _, ns := range sortedSpecs {
 		ext := m.Specs[ns]
 		if ext.Required() {
-			if _, ok := ext.(*UnknownSpec); ok {
+			if _, ok := ext.(*spec.UnknownSpec); ok {
 				return errors.ErrRequiredExt
 			}
 		}

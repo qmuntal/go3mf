@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/go-test/deep"
+	"github.com/qmuntal/go3mf/spec"
 	"github.com/qmuntal/go3mf/spec/encoding"
 	"github.com/stretchr/testify/mock"
 )
@@ -46,7 +47,7 @@ func (m *mockPackagePart) AddRelationship(args0 Relationship) {
 func TestMarshalModel(t *testing.T) {
 	m := &Model{
 		Units: UnitMillimeter, Language: "en-US", Path: "/3D/3dmodel.model", Thumbnail: "/thumbnail.png",
-		Specs:   map[string]Spec{fakeExtension: &fakeSpec{}},
+		Specs:   map[string]spec.Spec{fakeExtension: &fakeSpec{}},
 		AnyAttr: AnyAttr{&fakeAttr{Value: "model_fake"}},
 		Resources: Resources{
 			Assets: []Asset{

@@ -9,7 +9,7 @@ import (
 )
 
 var _ encoding.Decoder = new(Spec)
-var _ go3mf.Spec = new(Spec)
+var _ spec.Spec = new(Spec)
 var _ spec.ValidatorSpec = new(Spec)
 var _ encoding.MarshalerAttr = new(BuildAttr)
 var _ encoding.MarshalerAttr = new(ItemAttr)
