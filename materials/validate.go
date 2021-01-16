@@ -8,30 +8,30 @@ import (
 	"github.com/qmuntal/go3mf/errors"
 )
 
-func (sp *Spec) Validate(path string, asset interface{}) error {
+func (sp Spec) Validate(m interface{}, path string, asset interface{}) error {
 	if asset, ok := asset.(go3mf.Asset); ok {
-		return sp.validateAsset(path, asset)
+		return sp.validateAsset(m.(*go3mf.Model), path, asset)
 	}
 	return nil
 }
 
-func (sp *Spec) validateAsset(path string, r go3mf.Asset) (errs error) {
+func (sp Spec) validateAsset(m *go3mf.Model, path string, r go3mf.Asset) (errs error) {
 	switch r := r.(type) {
 	case *ColorGroup:
 		errs = sp.validateColorGroup(path, r)
 	case *Texture2DGroup:
-		errs = sp.validateTexture2DGroup(path, r)
+		errs = sp.validateTexture2DGroup(m, path, r)
 	case *Texture2D:
-		errs = sp.validateTexture2D(path, r)
+		errs = sp.validateTexture2D(m, path, r)
 	case *MultiProperties:
-		errs = sp.validateMultiProps(path, r)
+		errs = sp.validateMultiProps(m, path, r)
 	case *CompositeMaterials:
-		errs = sp.validateCompositeMat(path, r)
+		errs = sp.validateCompositeMat(m, path, r)
 	}
 	return
 }
 
-func (sp *Spec) validateColorGroup(path string, r *ColorGroup) (errs error) {
+func (sp Spec) validateColorGroup(path string, r *ColorGroup) (errs error) {
 	if r.ID == 0 {
 		errs = errors.Append(errs, errors.ErrMissingID)
 	}
@@ -46,13 +46,13 @@ func (sp *Spec) validateColorGroup(path string, r *ColorGroup) (errs error) {
 	return
 }
 
-func (sp *Spec) validateTexture2DGroup(path string, r *Texture2DGroup) (errs error) {
+func (sp Spec) validateTexture2DGroup(m *go3mf.Model, path string, r *Texture2DGroup) (errs error) {
 	if r.ID == 0 {
 		errs = errors.Append(errs, errors.ErrMissingID)
 	}
 	if r.TextureID == 0 {
 		errs = errors.Append(errs, errors.NewMissingFieldError(attrTexID))
-	} else if text, ok := sp.m.FindAsset(path, r.TextureID); ok {
+	} else if text, ok := m.FindAsset(path, r.TextureID); ok {
 		if _, ok := text.(*Texture2D); !ok {
 			errs = errors.Append(errs, ErrTextureReference)
 		}
@@ -65,7 +65,7 @@ func (sp *Spec) validateTexture2DGroup(path string, r *Texture2DGroup) (errs err
 	return
 }
 
-func (sp *Spec) validateTexture2D(path string, r *Texture2D) (errs error) {
+func (sp Spec) validateTexture2D(m *go3mf.Model, path string, r *Texture2D) (errs error) {
 	if r.ID == 0 {
 		errs = errors.Append(errs, errors.ErrMissingID)
 	}
@@ -73,7 +73,7 @@ func (sp *Spec) validateTexture2D(path string, r *Texture2D) (errs error) {
 		errs = errors.Append(errs, errors.NewMissingFieldError(attrPath))
 	} else {
 		var hasTexture bool
-		for _, a := range sp.m.Attachments {
+		for _, a := range m.Attachments {
 			if strings.EqualFold(a.Path, r.Path) {
 				hasTexture = true
 				break
@@ -89,7 +89,7 @@ func (sp *Spec) validateTexture2D(path string, r *Texture2D) (errs error) {
 	return
 }
 
-func (sp *Spec) validateMultiProps(path string, r *MultiProperties) (errs error) {
+func (sp Spec) validateMultiProps(m *go3mf.Model, path string, r *MultiProperties) (errs error) {
 	if r.ID == 0 {
 		errs = errors.Append(errs, errors.ErrMissingID)
 	}
@@ -108,7 +108,7 @@ func (sp *Spec) validateMultiProps(path string, r *MultiProperties) (errs error)
 		lengths           = make([]int, len(r.PIDs))
 	)
 	for j, pid := range r.PIDs {
-		if pr, ok := sp.m.FindAsset(path, pid); ok {
+		if pr, ok := m.FindAsset(path, pid); ok {
 			switch pr := pr.(type) {
 			case *go3mf.BaseMaterials:
 				if j != 0 {
@@ -145,13 +145,13 @@ func (sp *Spec) validateMultiProps(path string, r *MultiProperties) (errs error)
 	return
 }
 
-func (sp *Spec) validateCompositeMat(path string, r *CompositeMaterials) (errs error) {
+func (sp Spec) validateCompositeMat(m *go3mf.Model, path string, r *CompositeMaterials) (errs error) {
 	if r.ID == 0 {
 		errs = errors.Append(errs, errors.ErrMissingID)
 	}
 	if r.MaterialID == 0 {
 		errs = errors.Append(errs, errors.NewMissingFieldError(attrMatID))
-	} else if mat, ok := sp.m.FindAsset(path, r.MaterialID); ok {
+	} else if mat, ok := m.FindAsset(path, r.MaterialID); ok {
 		if bm, ok := mat.(*go3mf.BaseMaterials); ok {
 			for _, index := range r.Indices {
 				if int(index) > len(bm.Materials) {

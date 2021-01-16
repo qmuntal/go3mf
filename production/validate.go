@@ -11,17 +11,17 @@ type uuidPath interface {
 	ObjectPath() string
 }
 
-func (sp *Spec) Validate(path string, e interface{}) error {
+func (sp Spec) Validate(m interface{}, path string, e interface{}) error {
 	switch e := e.(type) {
 	case *go3mf.Model:
 		return sp.validateModel(e)
 	case *go3mf.Object:
-		return sp.validateObject(path, e)
+		return sp.validateObject(m.(*go3mf.Model), path, e)
 	}
 	return nil
 }
 
-func (sp *Spec) validateModel(m *go3mf.Model) error {
+func (sp Spec) validateModel(m *go3mf.Model) error {
 	var errs error
 	u := GetBuildAttr(&m.Build)
 	if u == nil {
@@ -33,7 +33,7 @@ func (sp *Spec) validateModel(m *go3mf.Model) error {
 		var iErrs error
 
 		if p := GetItemAttr(item); p != nil {
-			iErrs = errors.Append(iErrs, sp.validatePathUUID("", p))
+			iErrs = errors.Append(iErrs, sp.validatePathUUID(m, "", p))
 		} else {
 			iErrs = errors.Append(iErrs, errors.NewMissingFieldError(attrProdUUID))
 		}
@@ -44,7 +44,7 @@ func (sp *Spec) validateModel(m *go3mf.Model) error {
 	return errs
 }
 
-func (sp *Spec) validateObject(path string, obj *go3mf.Object) error {
+func (sp Spec) validateObject(m *go3mf.Model, path string, obj *go3mf.Object) error {
 	var errs error
 	u := GetObjectAttr(obj)
 	if u == nil {
@@ -55,7 +55,7 @@ func (sp *Spec) validateObject(path string, obj *go3mf.Object) error {
 	for i, c := range obj.Components {
 		var cErrs error
 		if p := GetComponentAttr(c); p != nil {
-			cErrs = errors.Append(cErrs, sp.validatePathUUID(path, p))
+			cErrs = errors.Append(cErrs, sp.validatePathUUID(m, path, p))
 		} else {
 			cErrs = errors.Append(cErrs, errors.NewMissingFieldError(attrProdUUID))
 		}
@@ -66,7 +66,7 @@ func (sp *Spec) validateObject(path string, obj *go3mf.Object) error {
 	return errs
 }
 
-func (sp *Spec) validatePathUUID(path string, p uuidPath) error {
+func (sp Spec) validatePathUUID(m *go3mf.Model, path string, p uuidPath) error {
 	var errs error
 	if p.getUUID() == "" {
 		errs = errors.Append(errs, errors.NewMissingFieldError(attrProdUUID))
@@ -74,7 +74,7 @@ func (sp *Spec) validatePathUUID(path string, p uuidPath) error {
 		errs = errors.Append(errs, ErrUUID)
 	}
 	if p.ObjectPath() != "" {
-		if path == "" || path == sp.m.PathOrDefault() { // root
+		if path == "" || path == m.PathOrDefault() { // root
 			// Path is validated as part if the core validations
 		} else {
 			errs = errors.Append(errs, ErrProdRefInNonRoot)

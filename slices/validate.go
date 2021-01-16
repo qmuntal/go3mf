@@ -11,32 +11,32 @@ func validTransform(t go3mf.Matrix) bool {
 	return t[2] == 0 && t[6] == 0 && t[8] == 0 && t[9] == 0 && t[10] == 1
 }
 
-func (sp *Spec) Validate(path string, e interface{}) error {
+func (sp Spec) Validate(m interface{}, path string, e interface{}) error {
 	switch e := e.(type) {
 	case go3mf.Asset:
-		return sp.validateAsset(path, e)
+		return sp.validateAsset(m.(*go3mf.Model), path, e)
 	case *go3mf.Object:
-		return sp.validateObject(path, e)
+		return sp.validateObject(m.(*go3mf.Model), path, e)
 	}
 	return nil
 }
 
-func (sp *Spec) validateObject(path string, obj *go3mf.Object) error {
+func (sp Spec) validateObject(m *go3mf.Model, path string, obj *go3mf.Object) error {
 	sti := GetObjectAttr(obj)
 	if sti == nil {
 		return nil
 	}
 	var errs error
-	res, _ := sp.m.FindResources(path)
+	res, _ := m.FindResources(path)
 	if sti.SliceStackID == 0 {
 		errs = errors.Append(errs, errors.NewMissingFieldError(attrSliceRefID))
 	} else if r, ok := res.FindAsset(sti.SliceStackID); ok {
 		if r, ok := r.(*SliceStack); ok {
-			if !validateBuildTransforms(sp.m, path, obj.ID) {
+			if !validateBuildTransforms(m, path, obj.ID) {
 				errs = errors.Append(errs, ErrSliceInvalidTranform)
 			}
 			if obj.Type == go3mf.ObjectTypeModel || obj.Type == go3mf.ObjectTypeSolidSupport {
-				if !checkAllClosed(sp.m, r) {
+				if !checkAllClosed(m, r) {
 					errs = errors.Append(errs, ErrSlicePolygonNotClosed)
 				}
 			}
@@ -54,7 +54,7 @@ func (sp *Spec) validateObject(path string, obj *go3mf.Object) error {
 	return errs
 }
 
-func (sp *Spec) validateAsset(path string, r go3mf.Asset) error {
+func (sp Spec) validateAsset(m *go3mf.Model, path string, r go3mf.Asset) error {
 	var (
 		st *SliceStack
 		ok bool
@@ -67,7 +67,7 @@ func (sp *Spec) validateAsset(path string, r go3mf.Asset) error {
 		(len(st.Slices) == 0 && len(st.Refs) == 0) {
 		errs = errors.Append(errs, ErrSlicesAndRefs)
 	}
-	errs = errors.Append(errs, st.validateRefs(sp.m, path))
+	errs = errors.Append(errs, st.validateRefs(m, path))
 	errs = errors.Append(errs, st.validateSlices())
 	return errs
 }

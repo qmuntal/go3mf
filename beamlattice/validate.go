@@ -5,14 +5,14 @@ import (
 	"github.com/qmuntal/go3mf/errors"
 )
 
-func (sp *Spec) Validate(path string, obj interface{}) error {
+func (sp Spec) Validate(model interface{}, path string, obj interface{}) error {
 	if obj, ok := obj.(*go3mf.Object); ok {
-		return sp.validateObj(path, obj)
+		return sp.validateObj(model.(*go3mf.Model), path, obj)
 	}
 	return nil
 }
 
-func (sp *Spec) validateObj(path string, obj *go3mf.Object) error {
+func (sp Spec) validateObj(m *go3mf.Model, path string, obj *go3mf.Object) error {
 	if obj.Mesh == nil {
 		return nil
 	}
@@ -37,10 +37,10 @@ func (sp *Spec) validateObj(path string, obj *go3mf.Object) error {
 		errs = errors.Append(errs, ErrLatticeClippedNoMesh)
 	}
 	if bl.ClippingMeshID != 0 {
-		errs = errors.Append(errs, sp.validateRefMesh(path, bl.ClippingMeshID, obj.ID))
+		errs = errors.Append(errs, sp.validateRefMesh(m, path, bl.ClippingMeshID, obj.ID))
 	}
 	if bl.RepresentationMeshID != 0 {
-		errs = errors.Append(errs, sp.validateRefMesh(path, bl.RepresentationMeshID, obj.ID))
+		errs = errors.Append(errs, sp.validateRefMesh(m, path, bl.RepresentationMeshID, obj.ID))
 	}
 
 	for i, b := range bl.Beams {
@@ -70,11 +70,11 @@ func (sp *Spec) validateObj(path string, obj *go3mf.Object) error {
 	return errs
 }
 
-func (sp *Spec) validateRefMesh(path string, meshID, selfID uint32) error {
+func (sp Spec) validateRefMesh(m *go3mf.Model, path string, meshID, selfID uint32) error {
 	if meshID == selfID {
 		return errors.ErrRecursion
 	}
-	if res, ok := sp.m.FindResources(path); ok {
+	if res, ok := m.FindResources(path); ok {
 		for _, r := range res.Objects {
 			if r.ID == selfID {
 				return errors.ErrMissingResource

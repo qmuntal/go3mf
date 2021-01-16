@@ -62,7 +62,7 @@ func (f *fakeSpec) DecodeAttribute(parentNode interface{}, attr encoding.Attr) e
 	return nil
 }
 
-func (f *fakeSpec) Validate(_ string, e interface{}) error {
+func (f *fakeSpec) Validate(_ interface{}, _ string, e interface{}) error {
 	if e, ok := e.(*Model); ok {
 		var errs []error
 		if len(e.Build.AnyAttr) == 1 {

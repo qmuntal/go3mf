@@ -7,7 +7,9 @@ type PropertyGroup interface {
 // Validator is the interface implemented by specs
 // that can validate an element.
 //
-// Currently element can be a Model, Asset or Object.
+// model is guaranteed to be a *Model.
+// element can be a Model, Asset or Object.
+// In the future this list can be expanded.
 type ValidatorSpec interface {
-	Validate(path string, element interface{}) error
+	Validate(model interface{}, path string, element interface{}) error
 }

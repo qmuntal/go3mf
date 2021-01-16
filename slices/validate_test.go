@@ -167,8 +167,6 @@ func TestValidate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if len(tt.model.Specs) == 0 {
 				tt.model.WithSpec(&Spec{})
-			} else {
-				tt.model.Specs[Namespace].SetModel(tt.model)
 			}
 			got := tt.model.Validate()
 			if diff := deep.Equal(got.(*errors.List).Errors, tt.want); diff != nil {
